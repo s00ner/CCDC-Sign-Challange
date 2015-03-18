@@ -15,6 +15,13 @@ sign = SignHandler.new(conf_json["serialDevice"])
 
 api_key = SecureRandom.hex(2) #generate a 4 character hex string for the api key
 puts api_key
+File.write("./api.key", api_key)
+
+def check_key(key)
+	return false if key == nil
+	api_key = File.read("./api.key") #because we're going to change the api key once in awhile to prevent cheating
+	key.downcase == api_key.downcase ? true : false
+end
 
 before '/message/*' do #set default content-type for all api http responses
 	content_type 'application/json'
@@ -29,9 +36,7 @@ post '/message/new' do #write a new message to the sign
 	newid = SecureRandom.uuid
 	request.body.rewind #I'm not sure what this does but sinatra docs say to do it
 	data = JSON.parse request.body.read
-	if !data.has_key?('key') || data['key'].downcase != api_key.downcase #return 401 if api key is missing or wrong
-		halt 401, {'Content-Type' => 'application/json'}, {:error => "authentication failure"}.to_json
-	end
+	halt 401, {'Content-Type' => 'application/json'}, {:error => "authentication failure"}.to_json unless check_key(data['key'])
 	#I'm not sure if the line below is elegant or hackey
 	data[:status] = sign.add(newid,data['message'],(data['color'].to_sym if data.has_key?('color')),(data['transition'].to_sym if data.has_key?('transition')),(data['timer'] if data.has_key?('timer'))) ? "on" : "off" #adds message to the sign and returns on/off status
 	data[:uuid] = newid
@@ -57,6 +62,7 @@ put '/message/:uuid' do |id| #change message [uuid]
 	raise not_found if sign.messages[id] == nil
 	request.body.rewind #ditto above
 	data = JSON.parse request.body.read
+	halt 401, {'Content-Type' => 'application/json'}, {:error => "authentication failure"}.to_json unless check_key(data['key'])
 	#the "add" method from the sign class doesn't care if you're adding a new message or updating an existing one
 	data[:status] = sign.add(id,data['message'],(data['color'].to_sym if data.has_key?('color')),(data['transition'].to_sym if data.has_key?('transition')),(data['timer'] if data.has_key?('timer'))) ? "on" : "off"
 	data[:uuid] = id
