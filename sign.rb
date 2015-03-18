@@ -100,29 +100,3 @@ end
 
 
 
-=begin
-uas_sign = SignHandler.new("/dev/ttyUSB0")
-uas_sign.add(1,"red ", :red, :none)
-uas_sign.add(2,"orange ", :orange, :none)
-uas_sign.add(3,"green ", :green, :none)
-uas_sign.add(4,"yellow ", :yellow, :none)
-uas_sign.add(5,"rainbow", :rainbow, :none)
-
-
-=begin
-text = "start: "
-while uas_sign.add(1, text, :yellow, :none)
-	text = text + "123456789test  1234123412341234123412341234"
-	puts text.length
-	sleep(9)
-end
-=begin
-for i in 0..5
-	uas_sign.add(42, "8======D", :rainbow, :none)
-	sleep(5)
-	uas_sign.add(42, "this is a test", :green, :none)
-	sleep(5)
-end
-
-uas_sign.reset
-=end
