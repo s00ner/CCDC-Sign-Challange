@@ -15,11 +15,11 @@ sign = SignHandler.new(conf_json["serialDevice"])
 
 api_key = SecureRandom.hex(2) #generate a 4 character hex string for the api key
 puts api_key
-File.write("./api.key", api_key)
+File.write("/tmp/api.key", api_key)
 
 def check_key(key)
 	return false if key == nil
-	api_key = File.read("./api.key") #because we're going to change the api key once in awhile to prevent cheating
+	api_key = File.read("/tmp/api.key") #because we're going to change the api key once in awhile to prevent cheating
 	key.downcase == api_key.downcase ? true : false
 end
 
