@@ -13,13 +13,10 @@ class LedSign
 
   def is_on?
     #check to see if the sign is responding
-		@serial.flush_input #flush data that has not been read
+	@serial.flush_input #flush data that has not been read
     @serial.write("#{@prepend}#{@terminator}")
-		if @serial.read(8) == nil #This should be 12 bits for for some reason it breaks things when set to 12
-      return false
-    else
+#	Had to make this function always return true to work with my sign. I think my bootleg serial cable is the problem.
       return true
-    end
   end
 
   def write(message) #returns true for success, false when sign is off
