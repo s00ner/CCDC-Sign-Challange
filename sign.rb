@@ -6,7 +6,7 @@ class LedSign
   def initialize(serial_dev)
     #set values for communication with the sign, establish serial connection
     @prepend = "<ID01><PA>"
-    @terminator = " \r\n"
+		@terminator = "  \r\n" #added and extra space to this for my sign since it seems to cut off the last character when another message is added
     @serial = SerialPort.new(serial_dev,9600,8,1,SerialPort::NONE)
     @serial.read_timeout = 100 #this is so @serial.read doesn't hang, units is ms
   end
